@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar System Explorer</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #050816;
+            color: white;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        #planet-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .planet-card {
+            background: #11182c;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .planet-card h2 {
+            margin-top: 0;
+        }
+
+        .planet-card p {
+            margin: 8px 0;
+            color: #d7dbea;
+        }
+
+        .planet-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 900px) {
+            #planet-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            #planet-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>SOLAR SYSTEM EXPLORER</h1>
+        <p>태양계 8개 행성을 탐험해보세요.</p>
+    </header>
+
+    <main id="planet-container">
+    </main>
+
+    <script>
+    async function loadPlanets() {
+
+        const response = await fetch("/planets");
+        const planets = await response.json();
+
+        const container =
+            document.getElementById("planet-container");
+
+        for (const planet of planets) {
+
+            const imageResponse = await fetch(
+                `/planet-image/${planet.name.toLowerCase()}`
+            );
+
+            const imageData = await imageResponse.json();
+
+            const card = document.createElement("div");
+            card.className = "planet-card";
+
+            card.innerHTML = `
+                <img
+                    class="planet-image"
+                    src="${imageData.image_url}"
+                    alt="${planet.name}"
+                >
+
+                <h2>${planet.name}</h2>
+
+                <p>Gravity: ${planet.gravity} m/s²</p>
+                <p>Radius: ${planet.mean_radius_km} km</p>
+                <p>Temperature: ${planet.average_temperature_k} K</p>
+                <p>Orbit: ${planet.orbital_period_days} days</p>
+                <p>Moons: ${planet.moons}</p>
+            `;
+
+            container.appendChild(card);
+        }
+    }
+
+    loadPlanets();
+</script>
+
+</body>
+
+</html>
