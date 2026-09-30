@@ -36,6 +36,17 @@ NASA_SEARCH_TERMS = {
     "neptune": "Neptune planet"
 }
 
+PLANET_API_IDS = {
+    "mercury": "mercure",
+    "venus": "venus",
+    "earth": "terre",
+    "mars": "mars",
+    "jupiter": "jupiter",
+    "saturn": "saturne",
+    "uranus": "uranus",
+    "neptune": "neptune"
+}
+
 
 
 @app.get("/")
@@ -209,7 +220,14 @@ async def get_planet_image(planet_name: str):
 async def get_planet_full(planet_name: str):
 
     # 1. Solar System API에서 행성 정보 가져오기
-    planet_url = f"https://api.le-systeme-solaire.net/rest/bodies/{planet_name}"
+    planet_id = PLANET_API_IDS.get(
+        planet_name.lower(),
+        planet_name.lower()
+    )
+
+    planet_url = (
+        f"https://api.le-systeme-solaire.net/rest/bodies/{planet_id}"
+    )
 
     headers = {
         "Authorization": f"Bearer {SOLAR_API_KEY}"
@@ -234,7 +252,10 @@ async def get_planet_full(planet_name: str):
     nasa_url = "https://images-api.nasa.gov/search"
 
     params = {
-        "q": f"{planet_name} planet",
+        "q": NASA_SEARCH_TERMS.get(
+            planet_name.lower(),
+            f"{planet_name} planet"
+        ),
         "media_type": "image"
     }
 
@@ -251,13 +272,13 @@ async def get_planet_full(planet_name: str):
         )
 
     nasa_data = nasa_response.json()
-
     items = nasa_data["collection"]["items"]
 
     selected_item = None
 
     for item in items:
         title = item["data"][0]["title"].lower()
+
         description = item["data"][0].get(
             "description",
             ""

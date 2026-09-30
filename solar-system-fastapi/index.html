@@ -37,6 +37,12 @@
             border-radius: 16px;
             padding: 20px;
             text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .planet-card:hover {
+            transform: scale(1.03);
         }
 
         .planet-card h2 {
@@ -67,6 +73,47 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        #planet-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #modal-content {
+            position: relative;
+            width: 500px;
+            max-width: 90%;
+            background: #11182c;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        #modal-image {
+            width: 100%;
+            max-height: 350px;
+            object-fit: contain;
+            border-radius: 14px;
+        }
+
+        #modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -80,27 +127,44 @@
     <main id="planet-container">
     </main>
 
+    <div id="planet-modal">
+
+        <div id="modal-content">
+
+            <button id="modal-close">✕</button>
+
+            <img id="modal-image" src="" alt="Planet">
+
+            <h2 id="modal-name"></h2>
+
+            <div id="modal-info">
+            </div>
+
+        </div>
+
+    </div>
+
     <script>
-    async function loadPlanets() {
+        async function loadPlanets() {
 
-        const response = await fetch("/planets");
-        const planets = await response.json();
+            const response = await fetch("/planets");
+            const planets = await response.json();
 
-        const container =
-            document.getElementById("planet-container");
+            const container =
+                document.getElementById("planet-container");
 
-        for (const planet of planets) {
+            for (const planet of planets) {
 
-            const imageResponse = await fetch(
-                `/planet-image/${planet.name.toLowerCase()}`
-            );
+                const imageResponse = await fetch(
+                    `/planet-image/${planet.name.toLowerCase()}`
+                );
 
-            const imageData = await imageResponse.json();
+                const imageData = await imageResponse.json();
 
-            const card = document.createElement("div");
-            card.className = "planet-card";
+                const card = document.createElement("div");
+                card.className = "planet-card";
 
-            card.innerHTML = `
+                card.innerHTML = `
                 <img
                     class="planet-image"
                     src="${imageData.image_url}"
@@ -116,12 +180,46 @@
                 <p>Moons: ${planet.moons}</p>
             `;
 
-            container.appendChild(card);
-        }
-    }
+                card.addEventListener("click", async () => {
 
-    loadPlanets();
-</script>
+                    const response = await fetch(
+                        `/planet-full/${planet.name.toLowerCase()}`,
+                        { cache: "no-store" }
+                    );
+
+                    const detail = await response.json();
+
+                    if (!response.ok) {
+                        alert(`${planet.name} 상세 정보를 불러오지 못했습니다.`);
+                        return;
+                    }
+
+                    document.getElementById("modal-name").textContent = detail.name;
+
+                    document.getElementById("modal-image").src = detail.image_url;
+
+                    document.getElementById("modal-info").innerHTML = `
+    <p>Gravity: ${detail.gravity} m/s²</p>
+    <p>Radius: ${detail.mean_radius_km} km</p>
+    <p>Temperature: ${detail.average_temperature_k} K</p>
+    <p>Orbit: ${detail.orbital_period_days} days</p>
+    <p>Rotation: ${detail.rotation_hours} hours</p>
+    <p>Moons: ${detail.moons}</p>
+`;
+
+                    document.getElementById("planet-modal").style.display = "flex";
+                });
+
+                container.appendChild(card);
+            }
+        }
+
+        document.getElementById("modal-close").addEventListener("click", () => {
+            document.getElementById("planet-modal").style.display = "none";
+        });
+
+        loadPlanets();
+    </script>
 
 </body>
 
