@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+  <body>
+
+    <script>
+
+      /*
+    class는 함수의 한 유형
+    function이를 시작하기 위해 키워드를 사용하는 대신 키워드를 사용 class
+    속성은 constructor()메소드 내부에 할당
+    클래스 이름의 대소문자를 확인. 대문자로 "Car"라는 이름을 시작
+    생성자 함수는 객체가 초기화될 때 자동으로 호출됩니다.
+    */
+      class Car {
+        constructor(name) {
+          this.brand = name;
+        }
+      }
+
+      const mycar = new Car("Ford");
+
+      document.write(mycar.brand);
+    </script>
+
+  </body>
+</html>

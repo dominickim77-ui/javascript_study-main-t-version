@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+  <body>
+
+    <script>
+
+      //두 개체를 결합
+      const myVehicle = {
+        brand: 'Ford',
+        model: 'Mustang',
+        color: 'red'
+      }
+
+      const updateMyVehicle = {
+        type: 'car',
+        year: 2021, 
+        color: 'yellow'
+      }
+
+      const myUpdatedVehicle = {...myVehicle, ...updateMyVehicle}
+
+      //콘솔에서 확인하세요
+      console.log(myUpdatedVehicle);
+    </script>
+
+    <p>Press F12 누르고 콘솔에서 확인하세요</p>
+
+  </body>
+</html>

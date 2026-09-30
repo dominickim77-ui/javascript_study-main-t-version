@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>기본 fetch 실습 (Live Server)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <style>
+    body {
+      background-color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .card-box {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+    .console-box {
+      background: #0f172a;
+      color: #38bdf8;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13px;
+      padding: 16px;
+      border-radius: 8px;
+      height: 180px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body class="py-5">
+  <div class="container" style="max-width: 680px;">
+    
+    <div class="card-box mb-4">
+      <h4 class="fw-bold mb-1">☕ fetch() 단독 실습 (Promise .then() 체인)</h4>
+      <p class="text-muted small mb-3">
+        async/await 없이 오직 <strong>fetch</strong>와 <strong>.then()</strong>, <strong>.catch()</strong>만으로 날씨를 조회합니다.
+      </p>
+
+      <div class="d-flex gap-2 mb-3">
+        <select id="citySelect" class="form-select" style="max-width: 200px;">
+          <option value="seoul">서울 (Seoul)</option>
+          <option value="tokyo">도쿄 (Tokyo)</option>
+          <option value="london">런던 (London)</option>
+          <option value="newyork">뉴욕 (New York)</option>
+        </select>
+        <button id="btnFetch" class="btn btn-primary fw-bold flex-fill">fetch()로 날씨 주문하기</button>
+      </div>
+
+      <!-- 날씨 카드 -->
+      <div id="resultCard" class="p-3 bg-light rounded text-center d-none">
+        <div class="text-muted small" id="cityName">-</div>
+        <h2 class="fw-bold text-primary my-1" id="cityTemp">- ℃</h2>
+        <div class="small text-secondary" id="cityExtra">-</div>
+      </div>
+    </div>
+
+    <!-- 로그 창 -->
+    <div class="card-box">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="fw-bold small text-dark">📜 실행 로그 (단계별 흐름)</span>
+        <button class="btn btn-sm btn-outline-secondary" onclick="clearLog()">초기화</button>
+      </div>
+      <div class="console-box" id="logBox">> 버튼을 누르면 fetch()가 실행됩니다.</div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

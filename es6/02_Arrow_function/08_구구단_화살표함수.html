@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+
+    <title>Page Title</title>
+
+  </head>
+
+  <body>
+
+    <script>
+      //일반 함수
+      function gugudan(dan){
+
+        document.write("<h1>"+dan+"단 </h1>");//구구단
+
+        for(var j=1; j<=9; j++){
+
+          document.write(dan+"X"+j+"="+dan*j, "<br />");
+
+        }
+
+      };
+
+
+
+      gugudan(5);
+
+
+
+
+      //화살표 함수
+      var gugudan2=(dan2) =>{
+
+        document.write("<h1>"+dan2+"단 </h1>");//구구단
+
+        for(var j=1; j<=9; j++){
+
+          document.write(dan2+"X"+j+"="+dan2*j, "<br />");
+
+        }
+
+      }
+
+      gugudan2(3);
+
+
+
+
+
+    </script>
+
+
+
+  </body>
+
+</html>
+

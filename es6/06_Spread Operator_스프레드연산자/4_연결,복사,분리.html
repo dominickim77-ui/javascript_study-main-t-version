@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Page Title</title>
+  </head>
+  <body>
+
+    <script>
+      /*
+    스프레드 연산자는 연결, 복사 등의 용도로 꽤 활용도가 높음
+    */
+
+
+
+      // Array
+      var arr1 = [1, 2, 3, 4, 5]; 
+      var arr2 = [...arr1, 6, 7, 8, 9]; 
+
+      document.write(arr2); // [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+
+      // String
+      var str1 = 'paper block'; 
+      var str2 = [...str1]; 
+      document.write(str2); // [ "p", "a", "p", "e", "r", " ", "b", "l", "o", "c", "k" ]
+
+
+    </script>
+
+  </body>
+</html>

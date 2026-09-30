@@ -1,0 +1,27 @@
+{
+  "name": "weather-async-node-app",
+  "version": "1.0.0",
+  "description": "Node.js & Express weather API project demonstrating fetch, Promise, and async/await",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "fetch",
+    "promise",
+    "async-await",
+    "weather-api"
+  ],
+  "author": "Coding Apple Student",
+  "license": "ISC"
+}

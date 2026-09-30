@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+  <body>
+
+    <p id="demo"></p>
+
+    <script>
+      // 함수 내에서 객체를 사용하는 새로운 방법
+      const vehicleOne = {
+        brand: 'Ford',
+        model: 'Mustang',
+        type: 'car',
+        year: 2021, 
+        color: 'red'
+      }
+      
+      myVehicle(vehicleOne);
+      
+      // 객체(Object) + 객체 구조 분해 할당(Destructuring) + 함수 매개변수에서 구조 분해 사용
+      function myVehicle({type, color, brand, model}) {
+        const message = 'My ' + type + ' is a ' + color + ' ' + brand + ' ' + model + '.';
+
+        document.getElementById("demo").innerHTML = message;
+      }
+    </script>
+
+  </body>
+</html>

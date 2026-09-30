@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+  <body>
+
+    <h1>Arrow Function</h1>
+
+
+    <p id="demo"></p>
+
+    <script>
+
+      /*
+      괄호 없는 화살표 함수
+      실제로 매개변수가 하나만 있는 경우 괄호도 건너뛸 수 있다.
+      */
+      hello = val => "Hello " + val;
+
+      document.getElementById("demo").innerHTML = hello("World");
+    </script>
+
+  </body>
+</html>

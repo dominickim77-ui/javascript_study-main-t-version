@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+  <body>
+
+    <p id="demo"></p>
+
+    <script>
+      // 구조화 중첩
+      const vehicleOne = {
+        brand: 'Ford',
+        model: 'Mustang',
+        type: 'car',
+        year: 2021, 
+        color: 'red',
+        registration: {
+          city: 'Houston',
+          state: 'Texas',
+          country: 'USA'
+        }
+      }
+
+      myVehicle(vehicleOne)
+
+      function myVehicle({ model, registration: { state } }) {
+        const message = 'My ' + model + ' is registered in ' + state + '.';
+
+        document.getElementById("demo").innerHTML = message;
+      }
+    </script>
+
+  </body>
+</html>

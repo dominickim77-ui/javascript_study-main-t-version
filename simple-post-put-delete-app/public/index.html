@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>뉴스 소재 접수함</title>
+</head>
+<body>
+  <h1>뉴스 소재 접수함</h1>
+
+  <p>제목: <input id="title" value="제주 강풍"></p>
+  <p>핵심 사실: <input id="fact" value="제주 지역에 강풍이 관측됐다"></p>
+  <p>수정·삭제할 번호: <input id="ideaId" type="number" value="1"></p>
+
+  <button onclick="sendPost()">POST 등록</button>
+  <button onclick="sendPut()">PUT 수정</button>
+  <button onclick="sendDelete()">DELETE 삭제</button>
+  <button onclick="loadIdeas()">GET 목록 확인</button>
+
+  <h2>서버 응답</h2>
+  <pre id="result"></pre>
+
+  <script>
+    const result = document.getElementById('result');
+
+    async function request(url, options = {}) {
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      result.textContent =
+        `HTTP ${response.status}\n` + JSON.stringify(data, null, 2);
+
+      if (response.ok) {
+        await loadIdeas();
+      }
+    }
+
+    function inputData() {
+      return {
+        title: document.getElementById('title').value,
+        fact: document.getElementById('fact').value
+      };
+    }
+
+    function selectedId() {
+      return document.getElementById('ideaId').value;
+    }
+
+    async function sendPost() {
+      await request('/api/ideas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(inputData())
+      });
+    }
+
+    async function sendPut() {
+      await request(`/api/ideas/${selectedId()}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(inputData())
+      });
+    }
+
+    async function sendDelete() {
+      await request(`/api/ideas/${selectedId()}`, {
+        method: 'DELETE'
+      });
+    }
+
+    async function loadIdeas() {
+      const response = await fetch('/api/ideas');
+      const data = await response.json();
+      result.textContent = JSON.stringify(data, null, 2);
+    }
+
+    loadIdeas();
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Page Title</title>
+</head>
+
+<body>
+
+  <script>
+    /*
+     var는 function-scoped이고
+     let, const는 block-scoped이다.
+
+
+ 
+    */
+
+
+    // var 변수의 유효범위 - function-scoped
+    var foo = "This is String.";
+    if (typeof foo === 'string') {
+      var result = true;
+    } else {
+      var result = false;
+    }
+
+    document.write(result);    // result : true
+
+
+
+
+    // let const 변수의 유효범위  - let, const는 block-scoped
+    var foo = "This is String.";
+    if (typeof foo === 'string') {
+      const result = true;
+    } else {
+      const result = false;
+    }
+
+    document.write(result);    // result : result is not defined
+  </script>
+
+</body>
+
+</html>

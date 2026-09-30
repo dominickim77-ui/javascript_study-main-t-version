@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <body>
+
+    <h2> Arrow Function - Parameters(매개변수)</h2>
+
+
+    <p id="demo"></p>
+
+    <p id="demo3"></p>
+
+    <script>
+      var hello;
+
+      hello = (val) => "Hello " + val;
+
+      document.getElementById("demo").innerHTML = hello("Universe!");
+
+
+
+      //화살표 함수에 매개변수가 하나만 있는 경우 괄호를 건너뛸 수 있음        
+
+      var hello3;
+
+      hello3 = val => "Hello " + val;
+
+      document.getElementById("demo3").innerHTML = hello3("earth!");
+
+    </script>
+
+  </body>
+</html>

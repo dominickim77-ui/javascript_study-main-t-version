@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+  <body>
+
+    <script>
+
+      /*
+     클래스 상속을 생성하려면 extends 키워드를 사용
+     "Car" 클래스에서 메서드를 상속할 "Model"이라는 클래스
+     메서드 는 super()부모 클래스를 참조
+     생성자 메서드에서 메서드를 호출 super()하여 부모의 생성자 메서드를 호출하고 부모의 속성과 메서드에 액세스함
+     */
+      class Car {
+        constructor(name) {
+          this.brand = name;
+        }
+
+        present() {
+          return 'I have a ' + this.brand;
+        }
+      }
+
+      class Model extends Car {
+        constructor(name, mod) {
+          super(name);
+          this.model = mod;
+        }  
+        show() {
+          return this.present() + ', it is a ' + this.model
+        }
+      }
+
+      const mycar = new Model("Ford", "Mustang");
+      document.write(mycar.show());
+    </script>
+
+  </body>
+</html>

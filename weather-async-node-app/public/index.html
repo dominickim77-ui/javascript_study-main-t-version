@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Node.js 비동기 날씨 대시보드</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <style>
+    body {
+      background-color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .hero-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2);
+    }
+    .badge-provider {
+      background-color: #3b82f6;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+    }
+    .buzzer-box {
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 20px;
+      background: white;
+      transition: all 0.3s ease;
+    }
+    .buzzer-box.pending {
+      border-color: #f59e0b;
+      background-color: #fffbeb;
+    }
+    .buzzer-box.fulfilled {
+      border-color: #10b981;
+      background-color: #ecfdf5;
+    }
+    .buzzer-box.rejected {
+      border-color: #ef4444;
+      background-color: #fef2f2;
+    }
+    .terminal-window {
+      background: #090d16;
+      border-radius: 10px;
+      padding: 16px;
+      color: #38bdf8;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13px;
+      height: 220px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body class="py-5">
+  <div class="container" style="max-width: 900px;">
+    
+    <!-- 헤더 카드 -->
+    <div class="hero-card mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="fw-bold mb-0">☕ 카페 진동벨로 배우는 Node.js 날씨 앱</h2>
+        <span class="badge badge-provider">Express Backend</span>
+      </div>
+      <p class="text-slate-300 text-secondary mb-0">
+        자바스크립트 비동기 삼총사: <strong>fetch</strong> (주문) · <strong>Promise</strong> (진동벨) · <strong>async/await</strong> (대기)
+      </p>
+    </div>
+
+    <!-- 제어 패널 -->
+    <div class="card shadow-sm border-0 mb-4 p-4">
+      <h5 class="fw-bold mb-3">1. 날씨 요청 제어판</h5>
+      <div class="row g-3 align-items-center">
+        <div class="col-md-5">
+          <label class="form-label small text-muted">도시 선택</label>
+          <select id="citySelect" class="form-select">
+            <option value="seoul">서울 (Seoul)</option>
+            <option value="tokyo">도쿄 (Tokyo)</option>
+            <option value="newyork">뉴욕 (New York)</option>
+            <option value="london">런던 (London)</option>
+            <option value="paris">파리 (Paris)</option>
+          </select>
+        </div>
+        <div class="col-md-7 d-flex gap-2 align-items-end pt-4">
+          <button id="btnFetchSingle" class="btn btn-primary flex-fill py-2 fw-semibold">
+            단일 조회 (async/await)
+          </button>
+          <button id="btnFetchAll" class="btn btn-success flex-fill py-2 fw-semibold">
+            전체 5개 도시 동시 조회 (Promise.all)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 진동벨 상태 카드 -->
+    <div id="buzzerCard" class="buzzer-box mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <h6 class="fw-bold mb-0" id="buzzerTitle">🔔 진동벨 (Promise) 상태: 대기 준비 완료</h6>
+        <span class="badge bg-secondary" id="buzzerBadge">IDLE</span>
+      </div>
+      <p class="mb-0 text-muted small" id="buzzerDesc">버튼을 누르면 브라우저가 Node.js 백엔드로 비동기 주문을 전송합니다.</p>
+      
+      <!-- 날씨 결과 뷰 -->
+      <div id="weatherResult" class="mt-3 pt-3 border-top d-none">
+        <div class="row text-center" id="resultGrid"></div>
+      </div>
+    </div>
+
+    <!-- 터미널 콘솔 로그 -->
+    <div class="card shadow-sm border-0 p-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="fw-bold mb-0">📜 비동기 실행 실시간 로그 (Console)</h6>
+        <button class="btn btn-sm btn-outline-secondary" onclick="clearLog()">로그 지우기</button>
+      </div>
+      <div class="terminal-window" id="terminalLog">> 시스템이 준비되었습니다. 상단 버튼을 클릭해보세요.</div>
+    </div>
+
+  </div>
+
+  <script>
+    const terminalLog = document.getElementById('terminalLog');
+    const buzzerCard = document.getElementById('buzzerCard');
+    const buzzerTitle = document.getElementById('buzzerTitle');
+    const buzzerBadge = document.getElementById('buzzerBadge');
+    const buzzerDesc = document.getElementById('buzzerDesc');
+    const weatherResult = document.getElementById('weatherResult');
+    const resultGrid = document.getElementById('resultGrid');
+
+    function log(msg) {
+      const time = new Date().toLocaleTimeString();
+      terminalLog.textContent += `\n[${time}] ${msg}`;
+      terminalLog.scrollTop = terminalLog.scrollHeight;
+    }
+
+    function clearLog() {
+      terminalLog.textContent = '> 로그가 초기화되었습니다.';
+    }
+
+    function setBuzzerState(state, title, desc, badgeClass) {
+      buzzerCard.className = `buzzer-box mb-4 ${state}`;
+      buzzerTitle.textContent = title;
+      buzzerDesc.textContent = desc;
+      buzzerBadge.className = `badge ${badgeClass}`;
+      buzzerBadge.textContent = state.toUpperCase();
+    }
+
+    // 1. 단일 도시 조회 이벤트
+    document.getElementById('btnFetchSingle').addEventListener('click', async () => {
+      const city = document.getElementById('citySelect').value;
+      weatherResult.classList.add('d-none');
+      resultGrid.innerHTML = '';
+
+      setBuzzerState('pending', '⏳ 진동벨 발급: Pending (대기 중)', `${city} 날씨를 주방(Node.js 서버)에 주문했습니다.`, 'bg-warning text-dark');
+      log(`[주문] fetch('/api/weather?city=${city}') 호출`);
+
+      try {
+        const response = await fetch(`/api/weather?city=${city}`);
+        log(`[응답 도착] HTTP 상태 코드: ${response.status}`);
+
+        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
+        const result = await response.json();
+        if (!result.success) throw new Error(result.error);
+
+        const data = result.data;
+        setBuzzerState('fulfilled', '✅ 진동벨 울림: Fulfilled (완료)', `${data.city} 날씨 데이터 수령 성공!`, 'bg-success');
+        log(`[수령 완료] 기온: ${data.temperature}℃ | 습도: ${data.humidity}% | 출처: ${data.provider}`);
+
+        resultGrid.innerHTML = `
+          <div class="col-4">
+            <div class="text-muted small">현재 기온</div>
+            <h3 class="fw-bold text-primary mt-1">${data.temperature} ℃</h3>
+          </div>
+          <div class="col-4">
+            <div class="text-muted small">습도</div>
+            <h3 class="fw-bold text-info mt-1">${data.humidity} %</h3>
+          </div>
+          <div class="col-4">
+            <div class="text-muted small">풍속</div>
+            <h3 class="fw-bold text-secondary mt-1">${data.windSpeed} km/h</h3>
+          </div>
+        `;
+        weatherResult.classList.remove('d-none');
+      } catch (err) {
+        setBuzzerState('rejected', '❌ 주문 실패: Rejected (거절)', `에러 발생: ${err.message}`, 'bg-danger');
+        log(`[오류] ${err.message}`);
+      }
+    });
+
+    // 2. 전체 도시 병렬 조회 (Promise.all) 이벤트
+    document.getElementById('btnFetchAll').addEventListener('click', async () => {
+      weatherResult.classList.add('d-none');
+      resultGrid.innerHTML = '';
+
+      setBuzzerState('pending', '⏳ 진동벨 5개 발급: Pending (동시 병렬 대기)', '5개 도시(서울, 도쿄, 뉴욕, 런던, 파리)를 한 번에 조회합니다.', 'bg-warning text-dark');
+      log(`[동시 주문] fetch('/api/weather/compare') 병렬 API 호출 (Promise.all)`);
+
+      try {
+        const response = await fetch('/api/weather/compare');
+        const result = await response.json();
+
+        if (!result.success) throw new Error(result.error);
+
+        setBuzzerState('fulfilled', '✅ 5개 도시 동시 수령 성공! (Fulfilled)', `총 소요 시간: 단 ${result.durationMs}ms (직렬 실행 대비 압도적 단축)`, 'bg-success');
+        log(`[전체 완료] 5개 도시 날씨를 병렬로 ${result.durationMs}ms 만에 일괄 수령했습니다.`);
+
+        resultGrid.innerHTML = result.data.map(item => `
+          <div class="col">
+            <div class="card p-2 shadow-none border bg-light">
+              <div class="small fw-semibold text-truncate">${item.city.split(' ')[0]}</div>
+              <div class="h5 fw-bold text-primary my-1">${item.temperature}℃</div>
+              <div class="small text-muted">${item.humidity}%</div>
+            </div>
+          </div>
+        `).join('');
+        weatherResult.classList.remove('d-none');
+      } catch (err) {
+        setBuzzerState('rejected', '❌ 동시 주문 실패', err.message, 'bg-danger');
+        log(`[오류] ${err.message}`);
+      }
+    });
+  </script>
+</body>
+</html>

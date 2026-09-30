@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Page Title</title>
+  </head>
+  <body>
+
+    <script>
+     
+      //배열 병합
+      
+      var arr1 = [1,2,3]; 
+      var arr2 = [4,5,6]; 
+
+      arr1.push(...arr2) 
+
+      document.write(arr1); // [1,2,3,4,5,6]
+
+
+      var arr1 = [1,2];
+      var arr2 = [0, ...arr1, 3, 4];
+
+      document.write(arr2); // [0, 1, 2, 3, 4]
+    </script>
+
+  </body>
+</html>

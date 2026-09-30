@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <body>
+
+    <h2>Arrow Function</h2>
+
+
+    <p id="demo1"></p>
+
+    <p id="demo3"></p>
+
+    <p id="demo5"></p>
+
+
+    <script>
+
+      var hello1;
+
+      hello1 = function() {
+        return "Hello World1!";
+      }
+
+      document.getElementById("demo1").innerHTML = hello1();
+
+
+
+
+      var hello3;
+
+      hello3 =()=> {return "Hello World3!"};
+
+      document.getElementById("demo3").innerHTML = hello3();
+
+
+
+
+      var hello5;
+
+      hello5 = () => "Hello World5!";
+
+      document.getElementById("demo5").innerHTML = hello5();
+
+    </script>
+
+  </body>
+</html>

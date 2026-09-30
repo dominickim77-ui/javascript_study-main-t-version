@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Page Title</title>
+  </head>
+  <body>
+
+    <script>
+      /*
+       ``  백틱
+       var s = `abc`;
+       문자열 리터럴
+
+      콘솔에서 찍어보세요.
+      var name = 'Rohit Jindal';
+      var text = `My name is ${name}`;
+      console.log(text); // My name is Rohit Jindal
+
+
+      */
+
+      let arr = [10, 20, 30, 40, 50];
+
+      let newArr = arr.map((item, i) => {
+        //콘솔로 찍어보세요. 백틱을 이용해서  
+        console.log(`Index: ${i}`);
+
+        return item * 2;
+
+      });
+
+      document.write(newArr);
+
+    </script>
+
+  </body>
+</html>
