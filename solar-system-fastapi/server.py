@@ -113,7 +113,9 @@ async def get_planets():
                 "gravity": body.get("gravity"),
                 "mean_radius_km": body.get("meanRadius"),
                 "average_temperature_k": body.get("avgTemp"),
+                "average_temperature_c": round(body.get("avgTemp") - 273.15, 1),
                 "orbital_period_days": body.get("sideralOrbit"),
+                "orbital_period_years": round(body.get("sideralOrbit") / 365.25, 2),
                 "moons": len(body.get("moons") or [])
             })
 
@@ -306,15 +308,30 @@ async def get_planet_full(planet_name: str):
         image_title = selected_item["data"][0]["title"]
         image_url = selected_item["links"][0]["href"]
 
+    temperature_k = planet_data.get("avgTemp")
+    temperature_c = round(temperature_k - 273.15, 1)
 
-    # 3. 두 API 결과 합치기
+    orbit_days = planet_data.get("sideralOrbit")
+    orbit_years = round(orbit_days / 365.25, 2)
+
+    rotation = planet_data.get("sideralRotation")
+
+    if rotation is not None and rotation < 0:
+        rotation_direction = "Retrograde"
+        rotation_hours = abs(rotation)
+    else:
+        rotation_direction = "Prograde"
+        rotation_hours = rotation
+
+        # 3. 두 API 결과 합치기
     return {
         "name": planet_data.get("englishName"),
         "gravity": planet_data.get("gravity"),
         "mean_radius_km": planet_data.get("meanRadius"),
-        "average_temperature_k": planet_data.get("avgTemp"),
-        "orbital_period_days": planet_data.get("sideralOrbit"),
-        "rotation_hours": planet_data.get("sideralRotation"),
+        "average_temperature_c": temperature_c,
+        "orbital_period_years": orbit_years,
+        "rotation_hours": rotation_hours,
+        "rotation_direction": rotation_direction,
         "moons": len(planet_data.get("moons") or []),
         "image_title": image_title,
         "image_url": image_url

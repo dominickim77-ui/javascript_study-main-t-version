@@ -175,7 +175,7 @@
 
                 <p>Gravity: ${planet.gravity} m/s²</p>
                 <p>Radius: ${planet.mean_radius_km} km</p>
-                <p>Temperature: ${planet.average_temperature_k} K</p>
+                <p>Temperature: ${planet.average_temperature_c} °C</p>
                 <p>Orbit: ${planet.orbital_period_days} days</p>
                 <p>Moons: ${planet.moons}</p>
             `;
@@ -201,9 +201,10 @@
                     document.getElementById("modal-info").innerHTML = `
     <p>Gravity: ${detail.gravity} m/s²</p>
     <p>Radius: ${detail.mean_radius_km} km</p>
-    <p>Temperature: ${detail.average_temperature_k} K</p>
-    <p>Orbit: ${detail.orbital_period_days} days</p>
-    <p>Rotation: ${detail.rotation_hours} hours</p>
+    <p>Temperature: ${detail.average_temperature_c} °C</p>
+    <p>Orbit: ${detail.orbital_period_years} years</p>
+     Rotation: ${detail.rotation_hours} hours
+    (${detail.rotation_direction})
     <p>Moons: ${detail.moons}</p>
 `;
 
