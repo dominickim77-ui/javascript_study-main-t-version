@@ -214,6 +214,12 @@
             font-weight: bold;
             color: #d7dbea;
         }
+
+        .lang-btn.active {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 6px;
+        }
     </style>
 </head>
 
@@ -228,9 +234,13 @@
             <button class="lang-btn" data-lang="en">🇺🇸 English</button>
             <button class="lang-btn" data-lang="es">🇪🇸 Español</button>
         </div>
-        </div>
+
     </header>
 
+
+
+    <main id="planet-container">
+    </main>
     <section id="compare-section">
 
         <h2>Compare Planets</h2>
@@ -260,7 +270,6 @@
                 <option value="uranus">Uranus</option>
                 <option value="neptune">Neptune</option>
             </select>
-
             <button id="compare-button">
                 COMPARE
             </button>
@@ -270,9 +279,6 @@
         <div id="compare-result"></div>
 
     </section>
-
-    <main id="planet-container">
-    </main>
 
     <div id="planet-modal">
 
@@ -289,6 +295,16 @@
 
         </div>
 
+
+        <button id="compare-button">
+            COMPARE
+        </button>
+
+    </div>
+
+    <div id="compare-result"></div>
+
+    </section>
     </div>
 
     <script>
@@ -298,6 +314,7 @@
                 subtitle: "태양계 8개 행성을 탐험해보세요.",
                 compareTitle: "행성 비교",
                 compareButton: "비교하기",
+                samePlanetAlert: "서로 다른 두 행성을 선택해주세요.",
 
                 gravity: "중력",
                 radius: "반지름",
@@ -325,29 +342,70 @@
                 }
             },
 
-            planets: {
-                Mercury: "Mercury",
-                Venus: "Venus",
-                Earth: "Earth",
-                Mars: "Mars",
-                Jupiter: "Jupiter",
-                Saturn: "Saturn",
-                Uranus: "Uranus",
-                Neptune: "Neptune"
-            }
+            en: {
+                subtitle: "Explore the 8 planets of the Solar System.",
+                compareTitle: "Compare Planets",
+                compareButton: "COMPARE",
+                samePlanetAlert: "Please select two different planets.",
 
-            planets: {
-                Mercury: "Mercurio",
-                Venus: "Venus",
-                Earth: "Tierra",
-                Mars: "Marte",
-                Jupiter: "Júpiter",
-                Saturn: "Saturno",
-                Uranus: "Urano",
-                Neptune: "Neptuno"
+                gravity: "Gravity",
+                radius: "Radius",
+                temperature: "Temperature",
+                orbit: "Orbit",
+                rotation: "Rotation",
+                moons: "Moons",
+
+                years: "years",
+                year: "year",
+                hours: "hours",
+
+                prograde: "Prograde",
+                retrograde: "Retrograde",
+
+                planets: {
+                    Mercury: "Mercury",
+                    Venus: "Venus",
+                    Earth: "Earth",
+                    Mars: "Mars",
+                    Jupiter: "Jupiter",
+                    Saturn: "Saturn",
+                    Uranus: "Uranus",
+                    Neptune: "Neptune"
+                }
+            },
+
+            es: {
+                subtitle: "Explora los 8 planetas del Sistema Solar.",
+                compareTitle: "Comparar planetas",
+                compareButton: "COMPARAR",
+                samePlanetAlert: "Selecciona dos planetas diferentes.",
+
+                gravity: "Gravedad",
+                radius: "Radio",
+                temperature: "Temperatura",
+                orbit: "Órbita",
+                rotation: "Rotación",
+                moons: "Lunas",
+
+                years: "años",
+                year: "año",
+                hours: "horas",
+
+                prograde: "Rotación prograda",
+                retrograde: "Rotación retrógrada",
+
+                planets: {
+                    Mercury: "Mercurio",
+                    Venus: "Venus",
+                    Earth: "Tierra",
+                    Mars: "Marte",
+                    Jupiter: "Júpiter",
+                    Saturn: "Saturno",
+                    Uranus: "Urano",
+                    Neptune: "Neptuno"
+                }
             }
         };
-
         let currentLanguage = "ko";
 
         function updateLanguage() {
@@ -361,6 +419,13 @@
         document.querySelectorAll(".lang-btn").forEach(button => {
             button.addEventListener("click", () => {
                 currentLanguage = button.dataset.lang;
+
+                document.querySelectorAll(".lang-btn").forEach(btn => {
+                    btn.classList.remove("active");
+                });
+
+                button.classList.add("active");
+
                 updateLanguage();
 
                 document.getElementById("planet-container").innerHTML = "";
@@ -473,6 +538,11 @@
             const planetA = document.getElementById("planet-a").value;
             const planetB = document.getElementById("planet-b").value;
 
+            if (planetA === planetB) {
+                alert(t.samePlanetAlert);
+                return;
+            }
+
             const responseA = await fetch(
                 `/planet-full/${planetA}`,
                 { cache: "no-store" }
@@ -529,6 +599,11 @@
         });
 
         updateLanguage();
+
+        document
+            .querySelector('.lang-btn[data-lang="ko"]')
+            .classList.add("active");
+
         loadPlanets();
 
 
