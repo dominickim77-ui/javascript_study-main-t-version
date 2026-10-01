@@ -7,6 +7,17 @@
     <title>Solar System Explorer</title>
 
     <style>
+        #language-selector {
+            margin-top: 20px;
+        }
+
+        #language-select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 15px;
+        }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
@@ -37,8 +48,16 @@
             border-radius: 16px;
             padding: 20px;
             text-align: center;
+
             cursor: pointer;
-            transition: transform 0.2s;
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .planet-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
         }
 
         .planet-card:hover {
@@ -56,7 +75,7 @@
 
         .planet-image {
             width: 100%;
-            height: 180px;
+            height: 200px;
             object-fit: cover;
             border-radius: 12px;
             margin-bottom: 15px;
@@ -89,30 +108,101 @@
 
         #modal-content {
             position: relative;
-            width: 500px;
+            width: 520px;
             max-width: 90%;
             background: #11182c;
             border-radius: 20px;
-            padding: 30px;
+            padding: 28px;
             text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
         #modal-image {
             width: 100%;
-            max-height: 350px;
+            max-height: 360px;
             object-fit: contain;
             border-radius: 14px;
+            margin-bottom: 18px;
+        }
+
+        #modal-name {
+            font-size: 30px;
+            margin: 10px 0 18px;
+        }
+
+        #modal-info p {
+            margin: 10px 0;
+            color: #d7dbea;
         }
 
         #modal-close {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 14px;
+            right: 16px;
             border: none;
             background: transparent;
             color: white;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
+        }
+
+        #compare-section {
+            max-width: 900px;
+            margin: 0 auto 30px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .compare-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .compare-controls select,
+        #compare-button {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+        }
+
+        #compare-button {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #compare-result {
+            margin-top: 25px;
+        }
+
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            max-width: 850px;
+            margin: 0 auto;
+            background: #11182c;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .compare-grid>div {
+            padding: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: center;
+        }
+
+        .compare-header {
+            font-size: 20px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .compare-label {
+            font-weight: bold;
+            color: #d7dbea;
         }
     </style>
 </head>
@@ -122,7 +212,55 @@
     <header>
         <h1>SOLAR SYSTEM EXPLORER</h1>
         <p>태양계 8개 행성을 탐험해보세요.</p>
+
+        <div id="language-selector">
+            <select id="language-select">
+                <option value="ko">한국어</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+            </select>
+        </div>
     </header>
+
+    <section id="compare-section">
+
+        <h2>Compare Planets</h2>
+
+        <div class="compare-controls">
+
+            <select id="planet-a">
+                <option value="mercury">Mercury</option>
+                <option value="venus">Venus</option>
+                <option value="earth" selected>Earth</option>
+                <option value="mars">Mars</option>
+                <option value="jupiter">Jupiter</option>
+                <option value="saturn">Saturn</option>
+                <option value="uranus">Uranus</option>
+                <option value="neptune">Neptune</option>
+            </select>
+
+            <span>VS</span>
+
+            <select id="planet-b">
+                <option value="mercury">Mercury</option>
+                <option value="venus">Venus</option>
+                <option value="earth">Earth</option>
+                <option value="mars" selected>Mars</option>
+                <option value="jupiter">Jupiter</option>
+                <option value="saturn">Saturn</option>
+                <option value="uranus">Uranus</option>
+                <option value="neptune">Neptune</option>
+            </select>
+
+            <button id="compare-button">
+                COMPARE
+            </button>
+
+        </div>
+
+        <div id="compare-result"></div>
+
+    </section>
 
     <main id="planet-container">
     </main>
@@ -155,6 +293,11 @@
 
             for (const planet of planets) {
 
+                const orbitText =
+                    planet.orbital_period_years === 1
+                        ? "1 year"
+                        : `${planet.orbital_period_years} years`;
+
                 const imageResponse = await fetch(
                     `/planet-image/${planet.name.toLowerCase()}`
                 );
@@ -165,20 +308,20 @@
                 card.className = "planet-card";
 
                 card.innerHTML = `
-                <img
-                    class="planet-image"
-                    src="${imageData.image_url}"
-                    alt="${planet.name}"
-                >
+        <img
+            class="planet-image"
+            src="${imageData.image_url}"
+            alt="${planet.name}"
+        >
 
-                <h2>${planet.name}</h2>
+        <h2>${planet.name}</h2>
 
-                <p>Gravity: ${planet.gravity} m/s²</p>
-                <p>Radius: ${planet.mean_radius_km} km</p>
-                <p>Temperature: ${planet.average_temperature_c} °C</p>
-                <p>Orbit: ${planet.orbital_period_days} days</p>
-                <p>Moons: ${planet.moons}</p>
-            `;
+        <p>Gravity: ${planet.gravity} m/s²</p>
+        <p>Radius: ${planet.mean_radius_km} km</p>
+        <p>Temperature: ${planet.average_temperature_c} °C</p>
+        <p>Orbit: ${orbitText}</p>
+        <p>Moons: ${planet.moons}</p>
+    `;
 
                 card.addEventListener("click", async () => {
 
@@ -195,18 +338,19 @@
                     }
 
                     document.getElementById("modal-name").textContent = detail.name;
-
                     document.getElementById("modal-image").src = detail.image_url;
 
                     document.getElementById("modal-info").innerHTML = `
-    <p>Gravity: ${detail.gravity} m/s²</p>
-    <p>Radius: ${detail.mean_radius_km} km</p>
-    <p>Temperature: ${detail.average_temperature_c} °C</p>
-    <p>Orbit: ${detail.orbital_period_years} years</p>
-     Rotation: ${detail.rotation_hours} hours
-    (${detail.rotation_direction})
-    <p>Moons: ${detail.moons}</p>
-`;
+            <p>Gravity: ${detail.gravity} m/s²</p>
+            <p>Radius: ${detail.mean_radius_km} km</p>
+            <p>Temperature: ${detail.average_temperature_c} °C</p>
+            <p>Orbit: ${detail.orbital_period_years} years</p>
+            <p>
+                Rotation: ${detail.rotation_hours} hours
+                (${detail.rotation_direction})
+            </p>
+            <p>Moons: ${detail.moons}</p>
+        `;
 
                     document.getElementById("planet-modal").style.display = "flex";
                 });
@@ -219,7 +363,65 @@
             document.getElementById("planet-modal").style.display = "none";
         });
 
+        document.getElementById("planet-modal").addEventListener("click", (event) => {
+            if (event.target.id === "planet-modal") {
+                document.getElementById("planet-modal").style.display = "none";
+            }
+        });
+
+        document.getElementById("compare-button").addEventListener("click", async () => {
+
+            const planetA = document.getElementById("planet-a").value;
+            const planetB = document.getElementById("planet-b").value;
+
+            const responseA = await fetch(
+                `/planet-full/${planetA}`,
+                { cache: "no-store" }
+            );
+
+            const responseB = await fetch(
+                `/planet-full/${planetB}`,
+                { cache: "no-store" }
+            );
+
+            const dataA = await responseA.json();
+            const dataB = await responseB.json();
+
+            const result = document.getElementById("compare-result");
+
+            result.innerHTML = `
+    <div class="compare-grid">
+
+        <div class="compare-header"></div>
+        <div class="compare-header">${dataA.name}</div>
+        <div class="compare-header">${dataB.name}</div>
+
+        <div class="compare-label">Gravity</div>
+        <div>${dataA.gravity} m/s²</div>
+        <div>${dataB.gravity} m/s²</div>
+
+        <div class="compare-label">Radius</div>
+        <div>${dataA.mean_radius_km} km</div>
+        <div>${dataB.mean_radius_km} km</div>
+
+        <div class="compare-label">Temperature</div>
+        <div>${dataA.average_temperature_c} °C</div>
+        <div>${dataB.average_temperature_c} °C</div>
+
+        <div class="compare-label">Orbit</div>
+        <div>${dataA.orbital_period_years} years</div>
+        <div>${dataB.orbital_period_years} years</div>
+
+        <div class="compare-label">Moons</div>
+        <div>${dataA.moons}</div>
+        <div>${dataB.moons}</div>
+
+    </div>
+`;
+        });
         loadPlanets();
+
+
     </script>
 
 </body>
