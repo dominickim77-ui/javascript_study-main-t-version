@@ -311,47 +311,40 @@
                 hours: "시간",
 
                 prograde: "순행 자전",
-                retrograde: "역행 자전"
+                retrograde: "역행 자전",
+
+                planets: {
+                    Mercury: "수성",
+                    Venus: "금성",
+                    Earth: "지구",
+                    Mars: "화성",
+                    Jupiter: "목성",
+                    Saturn: "토성",
+                    Uranus: "천왕성",
+                    Neptune: "해왕성"
+                }
             },
 
-            en: {
-                subtitle: "Explore the 8 planets of the Solar System.",
-                compareTitle: "Compare Planets",
-                compareButton: "COMPARE",
+            planets: {
+                Mercury: "Mercury",
+                Venus: "Venus",
+                Earth: "Earth",
+                Mars: "Mars",
+                Jupiter: "Jupiter",
+                Saturn: "Saturn",
+                Uranus: "Uranus",
+                Neptune: "Neptune"
+            }
 
-                gravity: "Gravity",
-                radius: "Radius",
-                temperature: "Temperature",
-                orbit: "Orbit",
-                rotation: "Rotation",
-                moons: "Moons",
-
-                years: "years",
-                year: "year",
-                hours: "hours",
-
-                prograde: "Prograde",
-                retrograde: "Retrograde"
-            },
-
-            es: {
-                subtitle: "Explora los 8 planetas del Sistema Solar.",
-                compareTitle: "Comparar planetas",
-                compareButton: "COMPARAR",
-
-                gravity: "Gravedad",
-                radius: "Radio",
-                temperature: "Temperatura",
-                orbit: "Órbita",
-                rotation: "Rotación",
-                moons: "Lunas",
-
-                years: "años",
-                year: "año",
-                hours: "horas",
-
-                prograde: "Rotación prograda",
-                retrograde: "Rotación retrógrada"
+            planets: {
+                Mercury: "Mercurio",
+                Venus: "Venus",
+                Earth: "Tierra",
+                Mars: "Marte",
+                Jupiter: "Júpiter",
+                Saturn: "Saturno",
+                Uranus: "Urano",
+                Neptune: "Neptuno"
             }
         };
 
@@ -407,7 +400,7 @@
         alt="${planet.name}"
     >
 
-    <h2>${planet.name}</h2>
+    <h2>${t.planets[planet.name]}</h2>
 
     <p>${t.gravity}: ${planet.gravity} m/s²</p>
     <p>${t.radius}: ${planet.mean_radius_km} km</p>
@@ -430,7 +423,8 @@
                         return;
                     }
 
-                    document.getElementById("modal-name").textContent = detail.name;
+                    document.getElementById("modal-name").textContent =
+                        t.planets[detail.name];
                     document.getElementById("modal-image").src = detail.image_url;
 
                     const directionText =
@@ -498,8 +492,8 @@
     <div class="compare-grid">
 
         <div class="compare-header"></div>
-        <div class="compare-header">${dataA.name}</div>
-        <div class="compare-header">${dataB.name}</div>
+        <div class="compare-header">${t.planets[dataA.name]}</div>
+        <div class="compare-header">${t.planets[dataB.name]}</div>
 
         <div class="compare-label">${t.gravity}</div>
         <div>${dataA.gravity} m/s²</div>
