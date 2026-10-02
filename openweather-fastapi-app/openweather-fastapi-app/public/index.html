@@ -27,6 +27,7 @@
         <button id="btnPromise" class="btn btn-outline-primary">1. Promise (.then)</button>
         <button id="btnAsync" class="btn btn-primary">2. async / await</button>
         <button id="btnAll" class="btn btn-success">3. 네 도시 병렬 조회 (Promise.all)</button>
+        <button id="btnDb">4. DB에서 불러오기</button>
       </div>
     </section>
     <section class="panel"><h2 class="h6">조회 결과</h2><div id="displayArea" class="row g-3">버튼을 눌러 조회하세요.</div></section>
@@ -133,6 +134,41 @@
       finally { finish(number); }
     });
     document.getElementById('btnClear').addEventListener('click', () => { logBox.textContent = '> 로그 초기화'; });
+
+    document.getElementById('btnDb').addEventListener('click', async () => {
+  const number = begin('[DB] MySQL 데이터 요청 시작');
+
+  try {
+    const response = await fetch('/api/weather-db');
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    log(`[DB] MySQL 데이터 ${result.data.length}건 불러오기 완료`);
+
+    const items = result.data.map(row => ({
+      regionName: row.region_name,
+      cityName: row.city,
+      temperature: row.temperature,
+      feelsLike: row.feels_like,
+      humidity: row.humidity,
+      windSpeed: row.wind_speed,
+      description: row.description,
+      observedAt: row.observed_at
+    }));
+
+    showCards(items);
+
+  } catch (error) {
+    showError(error);
+
+  } finally {
+    finish(number);
+  }
+});
   </script>
 </body>
 </html>

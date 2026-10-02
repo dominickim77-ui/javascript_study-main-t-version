@@ -113,7 +113,9 @@
             background: rgba(0, 0, 0, 0.85);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 9999;
+             position: fixed;
+    z-index: 99999 !important;
         }
 
         #modal-content {
@@ -125,6 +127,8 @@
             padding: 28px;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+    z-index: 100000;
         }
 
         #modal-image {
@@ -161,6 +165,8 @@
             margin: 0 auto 30px;
             padding: 20px;
             text-align: center;
+            position: relative;
+            z-index: 1;
         }
 
         .compare-controls {
@@ -177,6 +183,8 @@
             border-radius: 8px;
             border: none;
             font-size: 16px;
+             position: relative;
+    z-index: 1;
         }
 
         #compare-button {
@@ -475,6 +483,13 @@
 `;
 
                 card.addEventListener("click", async () => {
+                    const newImageResponse = await fetch(
+                        `/planet-image/${planet.name.toLowerCase()}?refresh=${Date.now()}`
+                    );
+
+                    const newImageData = await newImageResponse.json();
+
+                    card.querySelector(".planet-image").src = newImageData.image_url;
 
                     const response = await fetch(
                         `/planet-full/${planet.name.toLowerCase()}`,
@@ -490,7 +505,7 @@
 
                     document.getElementById("modal-name").textContent =
                         t.planets[detail.name];
-                    document.getElementById("modal-image").src = detail.image_url;
+                    document.getElementById("modal-image").src = newImageData.image_url;
 
                     const directionText =
                         detail.rotation_direction === "Retrograde"

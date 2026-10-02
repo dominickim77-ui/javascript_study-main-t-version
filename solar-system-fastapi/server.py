@@ -1,4 +1,5 @@
 import os
+import random
 
 import httpx
 from dotenv import load_dotenv
@@ -132,15 +133,18 @@ async def get_planet_image(planet_name: str):
     url = "https://images-api.nasa.gov/search"
 
     params = {
-    "q": NASA_SEARCH_TERMS.get(
-        planet_name.lower(),
-        f"{planet_name} planet"
-    ),
-    "media_type": "image"
-}
+        "q": NASA_SEARCH_TERMS.get(
+            planet_name.lower(),
+            f"{planet_name} planet"
+        ),
+        "media_type": "image"
+    }
 
     async with httpx.AsyncClient() as client:
-        response = await client.get(url, params=params)
+        response = await client.get(
+            url,
+            params=params
+        )
 
     if response.status_code != 200:
         raise HTTPException(
@@ -149,7 +153,6 @@ async def get_planet_image(planet_name: str):
         )
 
     data = response.json()
-
     items = data["collection"]["items"]
 
     if len(items) == 0:
@@ -158,11 +161,15 @@ async def get_planet_image(planet_name: str):
             detail="이미지를 찾지 못했습니다."
         )
 
-    selected_item = None
+    matching_items = []
 
     for item in items:
+
         title = item["data"][0]["title"].lower()
-        description = item["data"][0].get("description", "").lower()
+        description = item["data"][0].get(
+            "description",
+            ""
+        ).lower()
 
         if (
             planet_name.lower() in title
@@ -172,45 +179,28 @@ async def get_planet_image(planet_name: str):
                 or "surface" in title
                 or "surface" in description
             )
+            and item.get("links")
         ):
-            selected_item = item
-            break
+            matching_items.append(item)
 
-    if selected_item is None:
-        selected_item = items[0]
+    if matching_items:
+        selected_item = random.choice(matching_items)
+    else:
+        valid_items = [
+            item for item in items
+            if item.get("links")
+        ]
+
+        if not valid_items:
+            raise HTTPException(
+                status_code=404,
+                detail="사용 가능한 이미지를 찾지 못했습니다."
+            )
+
+        selected_item = random.choice(valid_items)
 
     image_url = selected_item["links"][0]["href"]
     title = selected_item["data"][0]["title"]
-
-    return {
-        "planet": planet_name,
-        "title": title,
-        "image_url": image_url
-    }
-
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url, params=params)
-
-    if response.status_code != 200:
-        raise HTTPException(
-            status_code=response.status_code,
-            detail="NASA 이미지를 가져오지 못했습니다."
-        )
-
-    data = response.json()
-
-    items = data["collection"]["items"]
-
-    if len(items) == 0:
-        raise HTTPException(
-            status_code=404,
-            detail="이미지를 찾지 못했습니다."
-        )
-
-    first_item = items[0]
-
-    image_url = first_item["links"][0]["href"]
-    title = first_item["data"][0]["title"]
 
     return {
         "planet": planet_name,
