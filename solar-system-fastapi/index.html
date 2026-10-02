@@ -106,16 +106,13 @@
         #planet-modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.85);
             justify-content: center;
             align-items: center;
             z-index: 9999;
-             position: fixed;
-    z-index: 99999 !important;
         }
 
         #modal-content {
@@ -127,8 +124,6 @@
             padding: 28px;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            position: relative;
-    z-index: 100000;
         }
 
         #modal-image {
@@ -183,8 +178,8 @@
             border-radius: 8px;
             border: none;
             font-size: 16px;
-             position: relative;
-    z-index: 1;
+            position: relative;
+            z-index: 1;
         }
 
         #compare-button {
@@ -303,16 +298,6 @@
 
         </div>
 
-
-        <button id="compare-button">
-            COMPARE
-        </button>
-
-    </div>
-
-    <div id="compare-result"></div>
-
-    </section>
     </div>
 
     <script>
